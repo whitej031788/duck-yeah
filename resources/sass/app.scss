@@ -1,1 +1,21 @@
-//
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+.ko-alternate > div {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.ko-alternate .even {
+    background-color: #f5f5f5;
+}
+
+.ko-alternate .odd {
+    background-color: #e6e6e6;
+}
