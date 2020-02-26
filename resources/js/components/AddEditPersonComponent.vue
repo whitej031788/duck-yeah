@@ -3,7 +3,15 @@
         <loading :active.sync="isLoading" :can-cancel="false" ></loading>
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Add Person</div>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <span v-if="!isEdit">Add</span>
+                            <span v-if="isEdit">Edit</span> 
+                            Person
+                        </div>                        
+                    </div>
+                </div>
                 <div class="card-body">
                     <form @submit="handleAddPerson" method="post" novalidate="true">
                         <div class="row">
@@ -56,6 +64,7 @@
                             </div>
                         </div>
                         <div class="row ko-alternate">
+                            <div v-if="errors && errors.event_actions" class="text-danger col-md-12 text-center">{{ errors.event_actions[0] }}</div>
                             <div class="col-md-12" v-for="(action, index) in event_actions" v-bind:key="index" :class="{'even': index % 2 === 0, 'odd': index % 2 !== 0 }">
                                 <div class="form-group row">
                                     <label class="col-md-4 col-form-label text-md-right">Action Type</label>
@@ -72,12 +81,6 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label text-md-right">Description</label>
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control"  required autofocus v-model="action.description">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
                                     <label class="col-md-4 col-form-label text-md-right">Giphy URL</label>
                                     <div class="col-md-6">
                                         <input type="url" class="form-control" required autofocus v-model="action.giphy_action">
@@ -89,13 +92,22 @@
                                         <input type="url" class="form-control" required autofocus v-model="action.youtube_url">
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <label class="col-md-4 col-form-label text-md-right">Description</label>
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control"  required autofocus v-model="action.description">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row mb-0 mt-3">
-                            <div class="col-md-8 offset-md-2 text-center">
+                            <div class="col-md-4 offset-md-2 text-left">
                                 <button type="submit" class="btn btn-primary">
-                                    Add Person
+                                    <span v-if="!isEdit">Add</span><span v-if="isEdit">Edit</span> Person
                                 </button>
+                            </div>
+                            <div class="col-md-4 text-right" v-if="isEdit">
+                                <button @click="handleDeletePerson" type="button" class="btn btn-danger">Delete Person</button>
                             </div>
                         </div>
                     </form>
@@ -119,6 +131,34 @@
 
     function handleRemoveEvent(index) {
         this.event_actions.splice(index, 1);
+    }
+
+    function handleDeletePerson() {
+        if (!this.person || !this.person.id) {
+            alert('You cannot delete this person');
+            return;
+        }
+
+        if (confirm('Are you sure you want to delete this person?')) {
+            this.errors = {};
+            this.isLoading = true;
+
+            axios.post('/delete-person', {"person_id" : this.person.id}).then(response => {
+                this.isLoading = false;
+                this.$redirect('/home');
+            }).catch(error => {
+                this.isLoading = false;
+                this.$scrollToTop();
+                if (error.response.status === 422) {
+                    this.errors = error.response.data.errors || {};
+                } else {
+                    this.errors.main_error = ['Something went wrong when trying to delete the person'];
+                }
+            });
+            return;
+        } else {
+            return;
+        }
     }
 
     function handleAddPerson(e) {
@@ -160,7 +200,7 @@
 
     export default {
         name: "AddPerson",
-        props : ['roles', 'event-types'],
+        props : ['roles', 'event-types', 'person'],
         data() {
             return {
                 first_name: '',
@@ -169,6 +209,7 @@
                 job_role: '',
                 isLoading: false,
                 event_actions: [],
+                isEdit: false,
                 errors: {}
 
             }
@@ -176,11 +217,27 @@
         components: {
             Loading
         },
+        mounted() {
+            if (this.person) {
+                console.log(this.person);
+                this.initEditPerson()
+            }
+        },
         methods: {
             handleAddEvent: handleAddEvent,
             handleRemoveEvent: handleRemoveEvent,
             handleAddPerson: handleAddPerson,
-            toJSON: toJSON
+            toJSON: toJSON,
+            handleDeletePerson: handleDeletePerson,
+            initEditPerson: function() {
+                this.first_name = this.person.first_name;
+                this.last_name = this.person.last_name;
+                this.email = this.person.email;
+                this.job_role = this.person.job_role_id;
+                this.event_actions = this.person.event_actions;
+
+                this.isEdit = true;
+            }
         }
     }
 </script>

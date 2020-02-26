@@ -11,12 +11,12 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function success($data)
+    public function success($data = '')
     {
         if (is_a($data, 'Illuminate\Database\Eloquent\Collection')) {
-            return response()->json(['success' => true, 'data'=> $data]);
+            return response()->json(['success' => true, 'data' => $data]);
         } else {
-            return response()->json(['success' => true, 'data'=> $data]);
+            return response()->json(['success' => true, 'data' => $data]);
         }
     }
 
