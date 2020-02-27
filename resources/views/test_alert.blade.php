@@ -2,6 +2,6 @@
 
 @section('content')
 <div class="container">
-    <test-alert></test-alert>
+    <test-alert :persons="{{$persons}}"></test-alert>
 </div>
 @endsection

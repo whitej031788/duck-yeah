@@ -39,8 +39,8 @@ class PersonController extends Controller
 
         if ($request->event_actions && count($request->event_actions) > 0) {
             foreach($request->event_actions as $action) {
-                if (!$action['event_type_id'] || !$action['giphy_action'] || !$action['youtube_url']) {
-                    return response()->json(['errors' => ['event_actions' => ['Youtube URL, Giphy URL, and Action Type are required fields']]], 422);
+                if (!$action['event_type_id'] || !$action['giphy_url'] || !$action['youtube_key']) {
+                    return response()->json(['errors' => ['event_actions' => ['Youtube Key, Giphy URL, and Action Type are required fields']]], 422);
                 }
             }
         }
@@ -57,8 +57,9 @@ class PersonController extends Controller
                 $event_action = Person_Event_Action::create([
                     'person_id' => $person->id,
                     'event_type_id' => $action['event_type_id'],
-                    'giphy_action' => $action['giphy_action'],
-                    'youtube_url' => $action['youtube_url'],
+                    'giphy_url' => $action['giphy_url'],
+                    'youtube_key' => $action['youtube_key'],
+                    'youtube_start' => $action['youtube_start'],
                     'description' => $action['description']
                 ]);
             }

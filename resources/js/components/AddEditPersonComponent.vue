@@ -81,15 +81,19 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label text-md-right">Giphy URL</label>
+                                    <label class="col-md-4 col-form-label text-md-right">GIF URL</label>
                                     <div class="col-md-6">
-                                        <input type="url" class="form-control" required autofocus v-model="action.giphy_action">
+                                        <input type="url" class="form-control" required autofocus v-model="action.giphy_url">
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label text-md-right">Youtube Song URL</label>
-                                    <div class="col-md-6">
-                                        <input type="url" class="form-control" required autofocus v-model="action.youtube_url">
+                                    <label class="col-md-3 col-form-label text-md-right">Youtube Key</label>
+                                    <div class="col-md-3">
+                                        <input type="url" class="form-control" required autofocus v-model="action.youtube_key">
+                                    </div>
+                                    <label class="col-md-3 col-form-label text-md-right">Start (sec)</label>
+                                    <div class="col-md-3">
+                                        <input type="number" class="form-control" required autofocus v-model="action.youtube_start">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -120,8 +124,9 @@
 <script>
     function eventActionModel() {
         this.event_type_id = '';
-        this.giphy_action = '';
-        this.youtube_url = '';
+        this.giphy_url = '';
+        this.youtube_key = '';
+        this.youtube_start = 0;
         this.description = '';
     }
 

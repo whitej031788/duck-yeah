@@ -15,6 +15,6 @@ class Person extends Model
     }
 
     public function event_actions() {
-        return $this->hasMany(Person_Event_Action::class, 'person_id', 'id');
+        return $this->hasMany(Person_Event_Action::class, 'person_id', 'id')->with('event_type_info');
     }
 }

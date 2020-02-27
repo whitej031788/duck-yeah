@@ -39,11 +39,11 @@
 
         .event-container {
             color: white;
-            background: linear-gradient(270deg, #005817, #008c25, #00c634);
+            background-color: #45567C;
         }
 
         .event-container h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
         }
 
         .event-container h2 {
@@ -51,11 +51,24 @@
         }
 
         .message-container {
-            height: 40vh;
+            background-color: rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            border: 2px solid #CFE9FF;
+            text-align: center;
+            padding: 20px;
         }
 
         .gif-container {
             height: 60vh;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: auto;
+        }
+
+        #video-placeholder {
+            display: none;
         }
     </style>
 </head>
@@ -64,9 +77,15 @@
         <div class="row event-container" id="action-page" v-show="isPlayingSomething">
             <div id="video-placeholder">
             </div>
-            <div class="col-md-8 offset-md-2 mt-3 message-container">
+            <div class="col-md-2 mt-4 img-container pl-0">
+                <img src="/images/Jonathan Pointing.png" />
+            </div>
+            <div class="col-md-8 message-container" style="margin-top: 40px; margin-bottom: 40px;">
                 <h1>@{{event_description}}</h1>
                 <h2>@{{custom_description}}</h2>
+            </div>
+            <div class="col-md-2 mt-4 img-container">
+                <img src="/images/Ioannis Thumbs up.png" />
             </div>
             <div class="col-md-12 gif-container p-0 m-0" v-bind:style="{ backgroundImage: 'url(' + giphy_url + ')' }">
             </div>
@@ -100,7 +119,8 @@
         var channel = pusher.subscribe('duck-yeah');
             channel.bind('duck-alert', function(data) {
                 app.giphy_url = '';
-                app.youtube_url = '';
+                app.youtube_key = '';
+                app.youtube_start = 0;
 
                 if (data.alert && data.alert.duckData) {
                     app.resetData();
@@ -117,7 +137,8 @@
             data: {
                 messages: [],
                 giphy_url: '',
-                youtube_url: '',
+                youtube_key: '',
+                youtube_start: 0,
                 event_description: '',
                 custom_description: '',
                 pending_data: {},
@@ -127,7 +148,8 @@
                 processAlertToScreen: processAlertToScreen,
                 resetData: function() {
                     this.giphy_url = '';
-                    this.youtube_url = '';
+                    this.youtube_key = '';
+                    this.youtube_start = 0;
                     this.event_description = '';
                     this.custom_description = '';
                     this.pending_data = {};
@@ -145,6 +167,9 @@
             this.pending_data = data;
             this.event_description = data.event_description;
             this.custom_description = data.custom_description;
+            this.giphy_url = data.giphy_url;
+            this.youtube_key = data.youtube_key;
+            this.youtube_start = data.youtube_start;
 
             intro_done = false;
             custom_done = false;
@@ -185,7 +210,8 @@
 
         function stopCustomVideo() {
             app.giphy_url = '';
-            app.youtube_url = '';
+            app.youtube_key = '';
+            app.youtube_start = 0;
             initNewDiv();
             app.isPlayingSomething = false;
         }
@@ -202,7 +228,8 @@
             custom_player = new YT.Player('video-placeholder', {
                 height: '1',
                 width: '1',
-                videoId: 'nZXRV4MezEw',
+                videoId: app.youtube_key,
+                playerVars: {start: app.youtube_start},
                 events: {
                     'onReady': function(event) {
                         event.target.playVideo();

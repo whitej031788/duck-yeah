@@ -16,3 +16,6 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/salesforce-handler/opp-won', 'SalesforceController@oppWon')->name('opp_won_post');
+Route::post('/salesforce-handler/opp-created', 'SalesforceController@oppWon')->name('opp_won_post');

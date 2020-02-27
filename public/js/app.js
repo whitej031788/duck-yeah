@@ -2031,10 +2031,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 function eventActionModel() {
   this.event_type_id = '';
-  this.giphy_action = '';
-  this.youtube_url = '';
+  this.giphy_url = '';
+  this.youtube_key = '';
+  this.youtube_start = 0;
   this.description = '';
 }
 
@@ -2256,10 +2261,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 function handleSubmitTest(e) {
   var _this = this;
 
   e.preventDefault();
+
+  if (this.selected_person == 0 || this.selected_action == 0) {
+    this.errors.main_error = ['Please select a person and one of those persons actions'];
+    return;
+  }
+
   this.errors = {};
   this.isLoading = true;
   /* TO DO */
@@ -2279,6 +2308,8 @@ function handleSubmitTest(e) {
 
 function toJSON() {
   var obj = {};
+  obj.person_id = this.selected_person;
+  obj.person_event_action_id = this.selected_action;
   return obj;
 }
 
@@ -2286,15 +2317,36 @@ function toJSON() {
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TestAlert",
-  props: [],
+  props: ['persons'],
   data: function data() {
     return {
       isLoading: false,
-      errors: {}
+      errors: {},
+      selected_person: '',
+      available_actions: {},
+      selected_action: ''
     };
+  },
+  watch: {
+    selected_person: function selected_person(val) {
+      if (val) {
+        var result = this.persons.filter(function (obj) {
+          return obj.id === val;
+        });
+        this.available_actions = result[0].event_actions;
+      } else {
+        this.selected_action = '';
+        this.available_actions = {};
+      }
+
+      console.log(val);
+    }
   },
   components: {
     Loading: vue_loading_overlay__WEBPACK_IMPORTED_MODULE_0___default.a
+  },
+  mounted: function mounted() {
+    console.log(this.persons);
   },
   methods: {
     handleSubmitTest: handleSubmitTest,
@@ -38693,7 +38745,7 @@ var render = function() {
                                 staticClass:
                                   "col-md-4 col-form-label text-md-right"
                               },
-                              [_vm._v("Giphy URL")]
+                              [_vm._v("GIF URL")]
                             ),
                             _vm._v(" "),
                             _c("div", { staticClass: "col-md-6" }, [
@@ -38702,8 +38754,8 @@ var render = function() {
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: action.giphy_action,
-                                    expression: "action.giphy_action"
+                                    value: action.giphy_url,
+                                    expression: "action.giphy_url"
                                   }
                                 ],
                                 staticClass: "form-control",
@@ -38712,7 +38764,7 @@ var render = function() {
                                   required: "",
                                   autofocus: ""
                                 },
-                                domProps: { value: action.giphy_action },
+                                domProps: { value: action.giphy_url },
                                 on: {
                                   input: function($event) {
                                     if ($event.target.composing) {
@@ -38720,7 +38772,7 @@ var render = function() {
                                     }
                                     _vm.$set(
                                       action,
-                                      "giphy_action",
+                                      "giphy_url",
                                       $event.target.value
                                     )
                                   }
@@ -38734,19 +38786,19 @@ var render = function() {
                               "label",
                               {
                                 staticClass:
-                                  "col-md-4 col-form-label text-md-right"
+                                  "col-md-3 col-form-label text-md-right"
                               },
-                              [_vm._v("Youtube Song URL")]
+                              [_vm._v("Youtube Key")]
                             ),
                             _vm._v(" "),
-                            _c("div", { staticClass: "col-md-6" }, [
+                            _c("div", { staticClass: "col-md-3" }, [
                               _c("input", {
                                 directives: [
                                   {
                                     name: "model",
                                     rawName: "v-model",
-                                    value: action.youtube_url,
-                                    expression: "action.youtube_url"
+                                    value: action.youtube_key,
+                                    expression: "action.youtube_key"
                                   }
                                 ],
                                 staticClass: "form-control",
@@ -38755,7 +38807,7 @@ var render = function() {
                                   required: "",
                                   autofocus: ""
                                 },
-                                domProps: { value: action.youtube_url },
+                                domProps: { value: action.youtube_key },
                                 on: {
                                   input: function($event) {
                                     if ($event.target.composing) {
@@ -38763,7 +38815,48 @@ var render = function() {
                                     }
                                     _vm.$set(
                                       action,
-                                      "youtube_url",
+                                      "youtube_key",
+                                      $event.target.value
+                                    )
+                                  }
+                                }
+                              })
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "col-md-3 col-form-label text-md-right"
+                              },
+                              [_vm._v("Start (sec)")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-md-3" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: action.youtube_start,
+                                    expression: "action.youtube_start"
+                                  }
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "number",
+                                  required: "",
+                                  autofocus: ""
+                                },
+                                domProps: { value: action.youtube_start },
+                                on: {
+                                  input: function($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      action,
+                                      "youtube_start",
                                       $event.target.value
                                     )
                                   }
@@ -39043,7 +39136,136 @@ var render = function() {
                 attrs: { method: "post", novalidate: "true" },
                 on: { submit: _vm.handleSubmitTest }
               },
-              [_vm._m(0)]
+              [
+                _c("div", { staticClass: "form-group row mb-0 mt-3" }, [
+                  _c(
+                    "label",
+                    {
+                      staticClass:
+                        "col-md-2 offset-md-2 col-form-label text-md-right",
+                      attrs: { for: "first_name" }
+                    },
+                    [_vm._v("Person")]
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-md-6 text-center" }, [
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.selected_person,
+                            expression: "selected_person"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.selected_person = $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          }
+                        }
+                      },
+                      [
+                        _c("option", { attrs: { value: "" } }),
+                        _vm._v(" "),
+                        _vm._l(_vm.persons, function(person) {
+                          return _c(
+                            "option",
+                            { key: person.id, domProps: { value: person.id } },
+                            [
+                              _vm._v(
+                                _vm._s(person.first_name) +
+                                  " " +
+                                  _vm._s(person.last_name)
+                              )
+                            ]
+                          )
+                        })
+                      ],
+                      2
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _vm.selected_person
+                  ? _c("div", { staticClass: "form-group row mb-0 mt-3" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass:
+                            "col-md-2 offset-md-2 col-form-label text-md-right",
+                          attrs: { for: "first_name" }
+                        },
+                        [_vm._v("Event")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-md-6 text-center" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.selected_action,
+                                expression: "selected_action"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.selected_action = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }),
+                            _vm._v(" "),
+                            _vm._l(_vm.available_actions, function(action) {
+                              return _c(
+                                "option",
+                                {
+                                  key: action.id,
+                                  domProps: { value: action.id }
+                                },
+                                [
+                                  _vm._v(
+                                    _vm._s(action.event_type_info.event_name)
+                                  )
+                                ]
+                              )
+                            })
+                          ],
+                          2
+                        )
+                      ])
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm._m(0)
+              ]
             )
           ])
         ])

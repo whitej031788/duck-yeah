@@ -20,7 +20,7 @@ class Controller extends BaseController
         }
     }
 
-    public function error($msg)
+    public function error($msg = '')
     {
         return response()->json(['success' => false, 'message' => $msg], 400);
     }
