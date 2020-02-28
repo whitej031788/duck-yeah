@@ -18,7 +18,7 @@ class GreenhouseController extends Controller
 
         \Log::info($request->payload);
 
-        $person = Person::where('email', trim($request->payload['credited_to']['email']))->first();
+        $person = Person::where('email', trim($request->payload['application']['candidate']['recruiter']['email']))->first();
 
         if (is_null($person)) {
             return $this->error('person does not exist');
@@ -33,20 +33,24 @@ class GreenhouseController extends Controller
             return $this->error('action does not exist');
         }
 
-        $message = $this->buildMessage($person->first_name, $person->last_name, $request->payload['candidate']['first_name'], $request->payload['candidate']['last_name'], $request->payload['candidate']['title']);
+        $message = $this->buildMessage($person->first_name, $person->last_name, $request->payload['application']['offer']['custom_fields']['full_legal_name']['value']);
+        \Log::info($message);
         event(new IncomingAlert(new Duck_Alert($this->buildTestData($person_event_action, $person, $message))));
         return $this->success('alert triggered');
     }
 
-    private function buildMessage($first, $last, $candfirst, $candlast, $title) {
-        return $first . ' ' . $last . ' has hired a new candidate, ' . $candfirst . ' ' . $candlast . ' for the role of ' . $title . '!';
+    private function buildMessage($first, $last, $candfirst) {
+        return $first . ' ' . $last . ' has hired ' . $candfirst . '!';
     }
 
-    private function buildTestData($action, $event_description) {
+    private function buildTestData($action, $person, $event_description) {
         $alert_data = [
             "giphy_url" => $action->giphy_url,
             "youtube_key" => $action->youtube_key,
             "youtube_start" => $action->youtube_start,
+            "custom_description" => $action->description,
+            "user_first_name" => $person->first_name,
+            "user_last_name" => $person->last_name,
             "event_description" => $event_description
         ];
 
