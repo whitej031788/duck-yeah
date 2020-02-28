@@ -29,7 +29,7 @@ class ProdpadController extends Controller
     }
 
     private function buildMessage($title) {
-        return 'Team Rhapsody have pushed the ProdPad idea "' . $title . '" to development!';
+        return 'Team Rhapsody have pushed the ProdPad idea "' . $title . '" to development! Come and ask them about it, or check ProdPad for updates and deployments!';
     }
 
     private function buildTestData($action, $event_description) {

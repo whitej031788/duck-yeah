@@ -25,8 +25,11 @@
         }
 
         #cover-page {
-            background: url('/images/duck_yeah_logo_full.png');
-            background-repeat: no-repeat;
+            background: url('/images/duck_yeah_logo_full.png') no-repeat center center fixed; 
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
             background-size: auto;
             height: 100vh;
             padding: 0;
@@ -44,6 +47,7 @@
 
         .event-container h1 {
             font-size: 3rem;
+            line-height: 6rem;
         }
 
         .event-container h2 {
