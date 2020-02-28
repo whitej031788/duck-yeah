@@ -47,7 +47,7 @@
 
         .event-container h1 {
             font-size: 3rem;
-            line-height: 6rem;
+            line-height: 80px;
         }
 
         .event-container h2 {
