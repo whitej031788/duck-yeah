@@ -1,6 +1,6 @@
 public class httpCallOutCtrl {    
     @future (callout=true)
-    public static void callDuckYeahForOppWon(String user_name, String user_email, String opp_name, Decimal opp_amount) {
+    public static void callDuckYeahForOppWon(String user_name, String user_email, String opp_name, Decimal opp_amount, String supportUsers) {
 		String DUCK_ENDPOINT = 'http://265425e6.ngrok.io/api/salesforce-handler/opp-won';
 		// Instantiate a new http object
 		Http h = new Http();
@@ -17,6 +17,7 @@ public class httpCallOutCtrl {
         gen.writeStringField('user_email', user_email);
         gen.writeStringField('opp_name', opp_name);
         gen.writeNumberField('opp_amount', opp_amount);
+        gen.writeStringField('support_users', supportUsers);
         gen.writeEndObject();   
         String jsonS = gen.getAsString();
         

@@ -31,7 +31,7 @@ class SalesforceController extends Controller
             return $this->error('action does not exist');
         }
 
-        $message = $this->buildMessage($request->opp_name, $request->opp_amount, $person->first_name, $person->last_name);
+        $message = $this->buildMessage($request->opp_name, $request->opp_amount, $person->first_name, $person->last_name, $request->support_users);
         event(new IncomingAlert(new Duck_Alert($this->buildTestData($person_event_action, $person, $message))));
         return $this->success('alert triggered');
     }
@@ -41,8 +41,23 @@ class SalesforceController extends Controller
 
     }
 
-    private function buildMessage($oppName, $amount, $fname, $lname) {
-        return $fname . ' ' . $lname . ' has won opportunity ' . $oppName . ' with an estimated GMV of $' . $this->getAmountAttribute($amount) . '!';
+    private function buildMessage($oppName, $amount, $fname, $lname, $sup_users) {
+        $finString = $fname . ' ' . $lname . ' has won opportunity ' . $oppName . ' with an estimated GMV of $' . $this->getAmountAttribute($amount) . '!';
+
+        if (trim($sup_users)) {
+            $allUsers = explode(',', $sup_users);
+            $finString .= ' Huge shoutout to ';
+            for ($x = 0; $x < count($allUsers); $x++) {
+                $finString .= $allUsers[$x];
+                if ($x != (count($allUsers) - 1)) {
+                    $finString .= ' and ';
+                }
+            }
+
+            $finString .= ' on the deal as well!';
+        }
+
+        return $finString;
     }
 
     private function buildTestData($action, $person, $event_description) {
