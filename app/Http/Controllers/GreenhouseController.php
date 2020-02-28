@@ -33,14 +33,14 @@ class GreenhouseController extends Controller
             return $this->error('action does not exist');
         }
 
-        $message = $this->buildMessage($person->first_name, $person->last_name, $request->payload['application']['offer']['custom_fields']['full_legal_name']['value']);
+        $message = $this->buildMessage($person->first_name, $person->last_name, $request->payload['application']['offer']['custom_fields']['full_legal_name']['value'], $request->payload['application']['offer']['custom_fields']['official_job_title']['value']);
         \Log::info($message);
         event(new IncomingAlert(new Duck_Alert($this->buildTestData($person_event_action, $person, $message))));
         return $this->success('alert triggered');
     }
 
-    private function buildMessage($first, $last, $candfirst) {
-        return $first . ' ' . $last . ' has hired ' . $candfirst . '!';
+    private function buildMessage($first, $last, $candfirst, $title) {
+        return $first . ' ' . $last . ' has hired ' . $candfirst . 'for the role of ' . $title . '!';
     }
 
     private function buildTestData($action, $person, $event_description) {
