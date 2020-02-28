@@ -34,7 +34,7 @@
         }
 
         .duck-green {
-            background-color: rgb(4, 117, 48);
+            background-color: rgb(4, 129, 51);
         }
 
         .event-container {
