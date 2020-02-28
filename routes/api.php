@@ -21,3 +21,5 @@ Route::post('/salesforce-handler/opp-won', 'SalesforceController@oppWon')->name(
 Route::post('/salesforce-handler/opp-created', 'SalesforceController@oppWon')->name('opp_won_post');
 
 Route::post('/prodpad-handler/prod-shipped', 'ProdpadController@prodShipped')->name('card_complete_post');
+
+Route::post('/greenhouse-handler/candidate-hired', 'GreenhouseController@candHired')->name('card_complete_post');
