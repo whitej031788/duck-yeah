@@ -8,12 +8,12 @@
                         <div class="col-md-10">
                             <span v-if="!isEdit">Add</span>
                             <span v-if="isEdit">Edit</span> 
-                            Person
+                            Person or Team
                         </div>                        
                     </div>
                 </div>
                 <div class="card-body">
-                    <form @submit="handleAddPerson" method="post" novalidate="true">
+                    <form @submit="handleSubmit" method="post" novalidate="true">
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <h3>Basic Info</h3>
@@ -42,7 +42,7 @@
                             <div v-if="errors && errors.email" class="text-danger col-md-12 text-center">{{ errors.email[0] }}</div>
                         </div>
                         <div class="form-group row">
-                            <label for="job_role" class="col-md-4 col-form-label text-md-right">Job Role</label>
+                            <label for="job_role" class="col-md-4 col-form-label text-md-right">Role</label>
                             <div class="col-md-6">
                                 <select v-model="job_role" class="form-control" id="job_role">
                                     <option value=""></option>
@@ -107,11 +107,11 @@
                         <div class="form-group row mb-0 mt-3">
                             <div class="col-md-4 offset-md-2 text-left">
                                 <button type="submit" class="btn btn-primary">
-                                    <span v-if="!isEdit">Add</span><span v-if="isEdit">Edit</span> Person
+                                    <span v-if="!isEdit">Add</span><span v-if="isEdit">Edit</span> Person / Team
                                 </button>
                             </div>
                             <div class="col-md-4 text-right" v-if="isEdit">
-                                <button @click="handleDeletePerson" type="button" class="btn btn-danger">Delete Person</button>
+                                <button @click="handleDeletePerson" type="button" class="btn btn-danger">Delete Person / Team</button>
                             </div>
                         </div>
                     </form>
@@ -166,14 +166,22 @@
         }
     }
 
-    function handleAddPerson(e) {
+    function handleSubmit(e) {
         e.preventDefault();
+        if (this.isEdit) {
+            this.handleEditPerson();
+        } else {
+            this.handleAddPerson();
+        }
+    }
+
+    function handleEditPerson() {
         this.errors = {};
         this.isLoading = true;
 
         /* TO DO */
         // Should add front end input validation here, no time pre-hackathon
-        axios.post('/add-person', this.toJSON()).then(response => {
+        axios.post('/edit-person', this.toJSON(true)).then(response => {
             this.isLoading = false;
             this.$redirect('/home');
         }).catch(error => {
@@ -187,7 +195,27 @@
         });
     }
 
-    function toJSON() {
+    function handleAddPerson() {
+        this.errors = {};
+        this.isLoading = true;
+
+        /* TO DO */
+        // Should add front end input validation here, no time pre-hackathon
+        axios.post('/add-person', this.toJSON(false)).then(response => {
+            this.isLoading = false;
+            this.$redirect('/home');
+        }).catch(error => {
+            this.isLoading = false;
+            this.$scrollToTop();
+            if (error.response.status === 422) {
+                this.errors = error.response.data.errors || {};
+            } else {
+                this.errors.main_error = ['Something went wrong, please make sure all fields are filled out and try again'];
+            }
+        });
+    }
+
+    function toJSON(isEdit) {
         let obj = {};
 
         obj.first_name = this.first_name.trim();
@@ -195,6 +223,10 @@
         obj.email = this.email.trim();
         obj.job_role = this.job_role;
         obj.event_actions = this.event_actions;
+
+        if (isEdit) {
+            obj.person_id = this.person.id;
+        }
 
         return obj;
     }
@@ -234,6 +266,8 @@
             handleAddPerson: handleAddPerson,
             toJSON: toJSON,
             handleDeletePerson: handleDeletePerson,
+            handleEditPerson: handleEditPerson,
+            handleSubmit: handleSubmit,
             initEditPerson: function() {
                 this.first_name = this.person.first_name;
                 this.last_name = this.person.last_name;

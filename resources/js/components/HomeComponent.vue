@@ -5,7 +5,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-md-10">
-                            Existing People
+                            Existing People / Teams
                         </div>
                         <div class="col-md-2 float-right">
                             <a class="btn btn-primary" href="/add-person">Add Person</a>
@@ -20,7 +20,7 @@
                                 <th scope="col">First</th>
                                 <th scope="col">Last</th>
                                 <th scope="col">E-Mail</th>
-                                <th scope="col">Job</th>
+                                <th scope="col">Role</th>
                                 <th scope="col">Edit</th>
                             </tr>
                         </thead>
@@ -31,7 +31,7 @@
                                 <td>{{person.last_name}}</td>
                                 <td>{{person.email}}</td>
                                 <td>{{person.job_role.name}}</td>
-                                <td><a class="btn btn-secondary btn-sm" :href="'/edit-person/' + person.id">Edit Person</a></td>
+                                <td><a class="btn btn-secondary btn-sm" :href="'/edit-person/' + person.id">Edit</a></td>
                             </tr>
                         </tbody>
                     </table>

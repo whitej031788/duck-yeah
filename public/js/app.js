@@ -2085,16 +2085,25 @@ function handleDeletePerson() {
   }
 }
 
-function handleAddPerson(e) {
+function handleSubmit(e) {
+  e.preventDefault();
+
+  if (this.isEdit) {
+    this.handleEditPerson();
+  } else {
+    this.handleAddPerson();
+  }
+}
+
+function handleEditPerson() {
   var _this2 = this;
 
-  e.preventDefault();
   this.errors = {};
   this.isLoading = true;
   /* TO DO */
   // Should add front end input validation here, no time pre-hackathon
 
-  axios.post('/add-person', this.toJSON()).then(function (response) {
+  axios.post('/edit-person', this.toJSON(true)).then(function (response) {
     _this2.isLoading = false;
 
     _this2.$redirect('/home');
@@ -2111,13 +2120,43 @@ function handleAddPerson(e) {
   });
 }
 
-function toJSON() {
+function handleAddPerson() {
+  var _this3 = this;
+
+  this.errors = {};
+  this.isLoading = true;
+  /* TO DO */
+  // Should add front end input validation here, no time pre-hackathon
+
+  axios.post('/add-person', this.toJSON(false)).then(function (response) {
+    _this3.isLoading = false;
+
+    _this3.$redirect('/home');
+  })["catch"](function (error) {
+    _this3.isLoading = false;
+
+    _this3.$scrollToTop();
+
+    if (error.response.status === 422) {
+      _this3.errors = error.response.data.errors || {};
+    } else {
+      _this3.errors.main_error = ['Something went wrong, please make sure all fields are filled out and try again'];
+    }
+  });
+}
+
+function toJSON(isEdit) {
   var obj = {};
   obj.first_name = this.first_name.trim();
   obj.last_name = this.last_name.trim();
   obj.email = this.email.trim();
   obj.job_role = this.job_role;
   obj.event_actions = this.event_actions;
+
+  if (isEdit) {
+    obj.person_id = this.person.id;
+  }
+
   return obj;
 }
 
@@ -2153,6 +2192,8 @@ function toJSON() {
     handleAddPerson: handleAddPerson,
     toJSON: toJSON,
     handleDeletePerson: handleDeletePerson,
+    handleEditPerson: handleEditPerson,
+    handleSubmit: handleSubmit,
     initEditPerson: function initEditPerson() {
       this.first_name = this.person.first_name;
       this.last_name = this.person.last_name;
@@ -38363,7 +38404,7 @@ var render = function() {
                 _vm._v(" "),
                 _vm.isEdit ? _c("span", [_vm._v("Edit")]) : _vm._e(),
                 _vm._v(
-                  " \n                        Person\n                    "
+                  " \n                        Person or Team\n                    "
                 )
               ])
             ])
@@ -38374,7 +38415,7 @@ var render = function() {
               "form",
               {
                 attrs: { method: "post", novalidate: "true" },
-                on: { submit: _vm.handleAddPerson }
+                on: { submit: _vm.handleSubmit }
               },
               [
                 _c("div", { staticClass: "row" }, [
@@ -38545,7 +38586,7 @@ var render = function() {
                       staticClass: "col-md-4 col-form-label text-md-right",
                       attrs: { for: "job_role" }
                     },
-                    [_vm._v("Job Role")]
+                    [_vm._v("Role")]
                   ),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-md-6" }, [
@@ -38925,7 +38966,7 @@ var render = function() {
                       [
                         !_vm.isEdit ? _c("span", [_vm._v("Add")]) : _vm._e(),
                         _vm.isEdit ? _c("span", [_vm._v("Edit")]) : _vm._e(),
-                        _vm._v(" Person\n                            ")
+                        _vm._v(" Person / Team\n                            ")
                       ]
                     )
                   ]),
@@ -38939,7 +38980,7 @@ var render = function() {
                             attrs: { type: "button" },
                             on: { click: _vm.handleDeletePerson }
                           },
-                          [_vm._v("Delete Person")]
+                          [_vm._v("Delete Person / Team")]
                         )
                       ])
                     : _vm._e()
@@ -39026,7 +39067,7 @@ var render = function() {
                         staticClass: "btn btn-secondary btn-sm",
                         attrs: { href: "/edit-person/" + person.id }
                       },
-                      [_vm._v("Edit Person")]
+                      [_vm._v("Edit")]
                     )
                   ])
                 ])
@@ -39048,7 +39089,7 @@ var staticRenderFns = [
       _c("div", { staticClass: "row" }, [
         _c("div", { staticClass: "col-md-10" }, [
           _vm._v(
-            "\n                        Existing People\n                    "
+            "\n                        Existing People / Teams\n                    "
           )
         ]),
         _vm._v(" "),
@@ -39076,7 +39117,7 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("E-Mail")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Job")]),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Role")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Edit")])
       ])
