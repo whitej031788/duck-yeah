@@ -40,7 +40,7 @@ class GreenhouseController extends Controller
     }
 
     private function buildMessage($first, $last, $candfirst, $title) {
-        return $first . ' ' . $last . ' has hired ' . $candfirst . 'for the role of ' . $title . '!';
+        return $first . ' ' . $last . ' has hired ' . $candfirst . ' for the role of ' . $title . '!';
     }
 
     private function buildTestData($action, $person, $event_description) {
